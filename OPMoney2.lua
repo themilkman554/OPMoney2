@@ -330,6 +330,7 @@ local function opmoneytab()
                 else
                     remainingTimeSeconds = CAYO_HEIST_INTERVAL_SECONDS - elapsedTime
                 end
+                remainingTimeSeconds = math.max(0, remainingTimeSeconds)
                 local remainingMinutes = math.floor(remainingTimeSeconds / 60)
                 local remainingSeconds = math.floor(remainingTimeSeconds % 60)
                 ImGui.Text(string.format("Next Cayo Heist in: %02d:%02d", remainingMinutes, remainingSeconds))
@@ -346,6 +347,7 @@ local function opmoneytab()
                 else
                     remainingTimeSeconds = CASINO_HEIST_INTERVAL_SECONDS - elapsedTime
                 end
+                remainingTimeSeconds = math.max(0, remainingTimeSeconds)
                 local remainingMinutes = math.floor(remainingTimeSeconds / 60)
                 local remainingSeconds = math.floor(remainingTimeSeconds % 60)
                 ImGui.Text(string.format("Next Casino Heist in: %02d:%02d", remainingMinutes, remainingSeconds))
@@ -362,6 +364,7 @@ local function opmoneytab()
                 else
                     remainingTimeSeconds = DOOMSDAY_HEIST_INTERVAL_SECONDS - elapsedTime
                 end
+                remainingTimeSeconds = math.max(0, remainingTimeSeconds)
                 local remainingMinutes = math.floor(remainingTimeSeconds / 60)
                 local remainingSeconds = math.floor(remainingTimeSeconds % 60)
                 ImGui.Text(string.format("Next DoomsDay Heist in: %02d:%02d", remainingMinutes, remainingSeconds))
@@ -378,6 +381,7 @@ local function opmoneytab()
                 else
                     remainingTimeSeconds = AGENCY_HEIST_INTERVAL_SECONDS - elapsedTime
                 end
+                remainingTimeSeconds = math.max(0, remainingTimeSeconds)
                 local remainingMinutes = math.floor(remainingTimeSeconds / 60)
                 local remainingSeconds = math.floor(remainingTimeSeconds % 60)
                 ImGui.Text(string.format("Next Agency Heist in: %02d:%02d", remainingMinutes, remainingSeconds))
@@ -394,6 +398,7 @@ local function opmoneytab()
                 else
                     remainingTimeSeconds = APARTMENT_HEIST_INTERVAL_SECONDS - elapsedTime
                 end
+                remainingTimeSeconds = math.max(0, remainingTimeSeconds)
                 local remainingMinutes = math.floor(remainingTimeSeconds / 60)
                 local remainingSeconds = math.floor(remainingTimeSeconds % 60)
                 ImGui.Text(string.format("Next Apartment Heist in: %02d:%02d", remainingMinutes, remainingSeconds))
@@ -410,6 +415,7 @@ local function opmoneytab()
                 else
                     remainingTimeSeconds = CLUCKING_BELL_HEIST_INTERVAL_SECONDS - elapsedTime
                 end
+                remainingTimeSeconds = math.max(0, remainingTimeSeconds)
                 local remainingMinutes = math.floor(remainingTimeSeconds / 60)
                 local remainingSeconds = math.floor(remainingTimeSeconds % 60)
                 ImGui.Text(string.format("Next Clucking Bell Heist in: %02d:%02d", remainingMinutes, remainingSeconds))
@@ -459,105 +465,86 @@ end
 
 ClickGUI.AddTab("OP Money 2", opmoneytab)
 
-function OnTick()
-    local currentTime = Time.Get()
+local function heistLoop()
+    while true do
+        local currentTime = Time.Get()
 
-    -- Cayo Heist
-    if cayoHeistTimerActive then
-        if not cayoHeistInitialDelaySet then
-            if currentTime - cayoHeistLastTransactionTime >= cayoHeistInitialDelay then
+        -- Cayo Heist
+        if cayoHeistTimerActive then
+            local interval = cayoHeistInitialDelaySet and CAYO_HEIST_INTERVAL_SECONDS or cayoHeistInitialDelay
+            if currentTime - cayoHeistLastTransactionTime >= interval then
                 TriggerTransaction(0xDBF39508, CAYO_HEIST_PAYOUT)
                 cayoHeistLastTransactionTime = currentTime
-                cayoHeistInitialDelaySet = true
-            end
-        else
-            if currentTime - cayoHeistLastTransactionTime >= CAYO_HEIST_INTERVAL_SECONDS then
-                TriggerTransaction(0xDBF39508, CAYO_HEIST_PAYOUT)
-                cayoHeistLastTransactionTime = currentTime
+                if not cayoHeistInitialDelaySet then
+                    cayoHeistInitialDelaySet = true
+                end
             end
         end
-    end
 
-    -- Casino Heist
-    if casinoHeistTimerActive then
-        if not casinoHeistInitialDelaySet then
-            if currentTime - casinoHeistLastTransactionTime >= casinoHeistInitialDelay then
+        -- Casino Heist
+        if casinoHeistTimerActive then
+            local interval = casinoHeistInitialDelaySet and CASINO_HEIST_INTERVAL_SECONDS or casinoHeistInitialDelay
+            if currentTime - casinoHeistLastTransactionTime >= interval then
                 TriggerTransaction(0xB703ED29, CASINO_HEIST_PAYOUT)
                 casinoHeistLastTransactionTime = currentTime
-                casinoHeistInitialDelaySet = true
-            end
-        else
-            if currentTime - casinoHeistLastTransactionTime >= CASINO_HEIST_INTERVAL_SECONDS then
-                TriggerTransaction(0xB703ED29, CASINO_HEIST_PAYOUT)
-                casinoHeistLastTransactionTime = currentTime
+                if not casinoHeistInitialDelaySet then
+                    casinoHeistInitialDelaySet = true
+                end
             end
         end
-    end
 
-    -- Doomsday Heist
-    if doomsdayHeistTimerActive then
-        if not doomsdayHeistInitialDelaySet then
-            if currentTime - doomsdayHeistLastTransactionTime >= doomsdayHeistInitialDelay then
+        -- Doomsday Heist
+        if doomsdayHeistTimerActive then
+            local interval = doomsdayHeistInitialDelaySet and DOOMSDAY_HEIST_INTERVAL_SECONDS or doomsdayHeistInitialDelay
+            if currentTime - doomsdayHeistLastTransactionTime >= interval then
                 TriggerTransaction(Utils.Joaat("SERVICE_EARN_GANGOPS_FINALE"), DOOMSDAY_HEIST_PAYOUT)
                 doomsdayHeistLastTransactionTime = currentTime
-                doomsdayHeistInitialDelaySet = true
-            end
-        else
-            if currentTime - doomsdayHeistLastTransactionTime >= DOOMSDAY_HEIST_INTERVAL_SECONDS then
-                TriggerTransaction(Utils.Joaat("SERVICE_EARN_GANGOPS_FINALE"), DOOMSDAY_HEIST_PAYOUT)
-                doomsdayHeistLastTransactionTime = currentTime
+                if not doomsdayHeistInitialDelaySet then
+                    doomsdayHeistInitialDelaySet = true
+                end
             end
         end
-    end
 
-    -- Agency Heist
-    if agencyHeistTimerActive then
-        if not agencyHeistInitialDelaySet then
-            if currentTime - agencyHeistLastTransactionTime >= agencyHeistInitialDelay then
+        -- Agency Heist
+        if agencyHeistTimerActive then
+            local interval = agencyHeistInitialDelaySet and AGENCY_HEIST_INTERVAL_SECONDS or agencyHeistInitialDelay
+            if currentTime - agencyHeistLastTransactionTime >= interval then
                 TriggerTransaction(Utils.Joaat("SERVICE_EARN_AGENCY_FINALE"), AGENCY_HEIST_PAYOUT)
                 agencyHeistLastTransactionTime = currentTime
-                agencyHeistInitialDelaySet = true
-            end
-        else
-            if currentTime - agencyHeistLastTransactionTime >= AGENCY_HEIST_INTERVAL_SECONDS then
-                TriggerTransaction(Utils.Joaat("SERVICE_EARN_AGENCY_FINALE"), AGENCY_HEIST_PAYOUT)
-                agencyHeistLastTransactionTime = currentTime
+                if not agencyHeistInitialDelaySet then
+                    agencyHeistInitialDelaySet = true
+                end
             end
         end
-    end
 
-    -- Apartment Heist
-    if apartmentHeistTimerActive then
-        if not apartmentHeistInitialDelaySet then
-            if currentTime - apartmentHeistLastTransactionTime >= apartmentHeistInitialDelay then
+        -- Apartment Heist
+        if apartmentHeistTimerActive then
+            local interval = apartmentHeistInitialDelaySet and APARTMENT_HEIST_INTERVAL_SECONDS or apartmentHeistInitialDelay
+            if currentTime - apartmentHeistLastTransactionTime >= interval then
                 TriggerTransaction(Utils.Joaat("SERVICE_EARN_HEIST_FINALE"), APARTMENT_HEIST_PAYOUT)
                 apartmentHeistLastTransactionTime = currentTime
-                apartmentHeistInitialDelaySet = true
-            end
-        else
-            if currentTime - apartmentHeistLastTransactionTime >= APARTMENT_HEIST_INTERVAL_SECONDS then
-                TriggerTransaction(Utils.Joaat("SERVICE_EARN_HEIST_FINALE"), APARTMENT_HEIST_PAYOUT)
-                apartmentHeistLastTransactionTime = currentTime
+                if not apartmentHeistInitialDelaySet then
+                    apartmentHeistInitialDelaySet = true
+                end
             end
         end
-    end
 
-    -- Clucking Bell Heist
-    if cluckingBellHeistTimerActive then
-        if not cluckingBellHeistInitialDelaySet then
-            if currentTime - cluckingBellHeistLastTransactionTime >= cluckingBellHeistInitialDelay then
+        -- Clucking Bell Heist
+        if cluckingBellHeistTimerActive then
+            local interval = cluckingBellHeistInitialDelaySet and CLUCKING_BELL_HEIST_INTERVAL_SECONDS or cluckingBellHeistInitialDelay
+            if currentTime - cluckingBellHeistLastTransactionTime >= interval then
                 TriggerTransaction(Utils.Joaat("SERVICE_EARN_CLUCKING_BELL_FINALE"), CLUCKING_BELL_HEIST_PAYOUT)
                 cluckingBellHeistLastTransactionTime = currentTime
-                cluckingBellHeistInitialDelaySet = true
-            end
-        else
-            if currentTime - cluckingBellHeistLastTransactionTime >= CLUCKING_BELL_HEIST_INTERVAL_SECONDS then
-                TriggerTransaction(Utils.Joaat("SERVICE_EARN_CLUCKING_BELL_FINALE"), CLUCKING_BELL_HEIST_PAYOUT)
-                cluckingBellHeistLastTransactionTime = currentTime
+                if not cluckingBellHeistInitialDelaySet then
+                    cluckingBellHeistInitialDelaySet = true
+                end
             end
         end
+        Script.Yield()
     end
 end
+
+Script.QueueJob(heistLoop)
 
 function TriggerTransaction(hash, price)
     if Natives.Invoke("Bool",(0xA65568121DF2EA26)) then
