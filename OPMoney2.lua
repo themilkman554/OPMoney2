@@ -577,7 +577,7 @@ function TriggerTransaction(hash, price)
 
     if valid then
         GTA.CheckoutStart(id)
-        totalMoneyEarned = totalMoneyEarned + price
+
 
         Script.Yield(4000)
 
@@ -596,6 +596,7 @@ local heistName = heistNames[hash] or string.format("Heist:%x", hash)
             local message = string.format("[%s] Transaction successful! Deposited $%s into %s. Initial: $%s, Final: $%s.", heistName, formatMoneyWithCommas(price), depositTarget, formatMoneyWithCommas(initialMoney), formatMoneyWithCommas(finalMoney))
             print(message)
             GUI.AddToast("OPMONEY2", message, 5000, 0)
+            totalMoneyEarned = totalMoneyEarned + price
         else
             local message = string.format("[%s] Transaction failed! Attempted to deposit $%s into %s. Initial: $%s, Final: $%s.", heistName, formatMoneyWithCommas(price), depositTarget, formatMoneyWithCommas(initialMoney), formatMoneyWithCommas(finalMoney))
             print(message)
