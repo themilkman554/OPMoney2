@@ -1,26 +1,36 @@
-GUI.AddToast("OPMONEY2.2", "Added Improved $ Earned\n Console now shows when Some heists still only work once looking into it." , 5000, 0)
+GUI.AddToast("OPMONEY2.3", "Added Improved $ Earned\n Console now shows when transaction failed \n Added Countdown Changer" , 8000, 0)
+GUI.AddToast("OPMONEY2.3", "Only first three Loops seem to be working rn looking into it" , 8000, 0)
+GUI.AddToast("OPMONEY2.3", "Warning Script still in Testing Safe Limits unknown" , 8000, 0)
 
-local CAYO_HEIST_INTERVAL_SECONDS = 31 * 60 
+local transactionCountdownToggle = "TransactionCountdown"
+local transactionCountdown = 20 
+
+local function updateHeistIntervals()
+	CAYO_HEIST_INTERVAL_SECONDS = transactionCountdown * 60
+    CASINO_HEIST_INTERVAL_SECONDS = transactionCountdown * 60
+    DOOMSDAY_HEIST_INTERVAL_SECONDS = transactionCountdown * 60
+    AGENCY_HEIST_INTERVAL_SECONDS = transactionCountdown * 60
+    APARTMENT_HEIST_INTERVAL_SECONDS = transactionCountdown * 60
+    CLUCKING_BELL_HEIST_INTERVAL_SECONDS = transactionCountdown * 60
+end
+
+-- Call this once at the start to initialize
+updateHeistIntervals()
 
 local cayoHeistLastTransactionTime = 0
 local cayoHeistTimerActive = false
 local cayoHeistInitialDelaySet = false
 
-local CASINO_HEIST_INTERVAL_SECONDS = 61 * 60 
 local CASINO_HEIST_PAYOUT = 3619000
 
 local CAYO_HEIST_PAYOUT = 2050000
 
-local DOOMSDAY_HEIST_INTERVAL_SECONDS = 61 * 60 
 local DOOMSDAY_HEIST_PAYOUT = 2550000
 
-local AGENCY_HEIST_INTERVAL_SECONDS = 61 * 60 
 local AGENCY_HEIST_PAYOUT = 3000000
 
-local APARTMENT_HEIST_INTERVAL_SECONDS = 61 * 60 
 local APARTMENT_HEIST_PAYOUT = 3000000
 
-local CLUCKING_BELL_HEIST_INTERVAL_SECONDS = 61 * 60
 local CLUCKING_BELL_HEIST_PAYOUT = 1000000
 
 local casinoHeistLastTransactionTime = 0
@@ -59,7 +69,6 @@ local heistNames = {
 
 local addFiveMinutesToggle = "AddFiveMinutesBetweenTimers"
 
-local addFiveMinutesToggle = "AddFiveMinutesBetweenTimers"
 local addFiveMinutesActive = false
 
 local depositLocationToggle = "DepositLocation"
@@ -223,6 +232,17 @@ FeatureMgr.AddFeature(Utils.Joaat(depositLocationToggle), "Deposit in", eFeature
     end
 end)
 
+-- New feature for transaction countdown
+FeatureMgr.AddFeature(Utils.Joaat(transactionCountdownToggle), "Transaction Countdown", eFeatureType.List, "Choose the time between transactions", function(f)
+    local selectedIndex = f:GetListIndex()
+    local minutes = {20, 30, 40, 50, 60} -- Corresponds to the combo box options
+    if selectedIndex >= 0 and selectedIndex < #minutes then
+        transactionCountdown = minutes[selectedIndex + 1] -- +1 because Lua arrays are 1-indexed
+        updateHeistIntervals() -- Recalculate intervals
+        GUI.AddToast("OPMONEY2", string.format("Transaction countdown set to %d minutes.", transactionCountdown), 3000, 0)
+    end
+end)
+
 local function formatMoneyWithCommas(amount)
     local s = tostring(math.floor(amount))
     local len = #s
@@ -328,6 +348,19 @@ local function opmoneytab()
                     depositLocation = 2 -- Directly update for UI responsiveness
                     FeatureMgr.SetFeatureListIndex(Utils.Joaat(depositLocationToggle), 1) -- Bank
                 end
+            end
+
+            local currentTransactionCountdownIndex = 0
+            local options = {20, 30, 40, 50, 60}
+            for i, v in ipairs(options) do
+                if v == transactionCountdown then
+                    currentTransactionCountdownIndex = i - 1
+                    break
+                end
+            end
+            local newTransactionCountdownIndex = ImGui.Combo("Transaction Countdown", currentTransactionCountdownIndex, "20 Minutes\0 30 Minutes\0 40 Minutes\0 50 Minutes\0 60 Minutes\0\0")
+            if newTransactionCountdownIndex ~= currentTransactionCountdownIndex then
+                FeatureMgr.SetFeatureListIndex(Utils.Joaat(transactionCountdownToggle), newTransactionCountdownIndex)
             end
             ClickGUI.EndCustomChildWindow()
 
