@@ -48,6 +48,17 @@ local cluckingBellHeistInitialDelay = 0
 
 local totalMoneyEarned = 0
 
+local heistNames = {
+    [0xDBF39508] = "Cayo Perico Heist",
+    [0xB703ED29] = "Diamond Casino Heist",
+    [Utils.Joaat("SERVICE_EARN_GANGOPS_FINALE")] = "Doomsday Heist Finale",
+    [Utils.Joaat("SERVICE_EARN_AGENCY_FINALE")] = "Agency Heist Finale",
+    [Utils.Joaat("SERVICE_EARN_HEIST_FINALE")] = "Apartment Heist Finale",
+    [Utils.Joaat("SERVICE_EARN_CLUCKING_BELL_FINALE")] = "Clucking Bell Heist Finale"
+}
+
+local addFiveMinutesToggle = "AddFiveMinutesBetweenTimers"
+
 local addFiveMinutesToggle = "AddFiveMinutesBetweenTimers"
 local addFiveMinutesActive = false
 
@@ -74,9 +85,10 @@ end
 
 function Natives.Invoke(returnType, hash)
     return function(...)
-        return Natives[F("Invoke%s", returnType)](hash, ...)
+        return Natives[string.format("Invoke%s", returnType)](hash, ...)
     end
 end
+
 
 FeatureMgr.AddFeature(Utils.Joaat(cayoHeistToggle), "Enable Cayo Heist (2.05m payout)", eFeatureType.Toggle, "", function(f)
     local wasActive = cayoHeistTimerActive
@@ -547,8 +559,17 @@ end
 Script.QueueJob(heistLoop)
 
 function TriggerTransaction(hash, price)
-    if Natives.Invoke("Bool",(0xA65568121DF2EA26)) then
-        Natives.Invoke("Bool",(0xFA336E7F40C0A0D0))
+    local playerCharacter = Stats.GetInt(("mpply_last_mp_char"), 0)
+
+    local initialMoney = 0
+    if depositLocation == 1 then -- Wallet
+        initialMoney = Natives.Invoke("Int", 0xA40F9C2623F6A8B5)(playerCharacter)
+    elseif depositLocation == 2 then -- Bank
+        initialMoney = Natives.Invoke("Int", 0x76EF28DA05EA395A)(playerCharacter)
+    end
+
+    if Natives.Invoke("Bool", 0xA65568121DF2EA26) then
+        Natives.Invoke("Bool", 0xFA336E7F40C0A0D0)
     end
 
     -- Use depositLocation (1 for Wallet, 2 for Bank)
@@ -557,5 +578,32 @@ function TriggerTransaction(hash, price)
     if valid then
         GTA.CheckoutStart(id)
         totalMoneyEarned = totalMoneyEarned + price
+
+        Script.Yield(4000)
+
+        local finalMoney = 0
+        if depositLocation == 1 then -- Wallet
+            finalMoney = Natives.Invoke("Int", 0xA40F9C2623F6A8B5)(playerCharacter)
+        elseif depositLocation == 2 then -- Bank
+            finalMoney = Natives.Invoke("Int", 0x76EF28DA05EA395A)(playerCharacter)
+        end
+
+        local transactionSuccessful = (finalMoney - initialMoney) >= price
+        local depositTarget = (depositLocation == 1 and "Wallet") or "Bank"
+local heistName = heistNames[hash] or string.format("Heist:%x", hash)
+        
+        if transactionSuccessful then
+            local message = string.format("[%s] Transaction successful! Deposited $%s into %s. Initial: $%s, Final: $%s.", heistName, formatMoneyWithCommas(price), depositTarget, formatMoneyWithCommas(initialMoney), formatMoneyWithCommas(finalMoney))
+            print(message)
+            GUI.AddToast("OPMONEY2", message, 5000, 0)
+        else
+            local message = string.format("[%s] Transaction failed! Attempted to deposit $%s into %s. Initial: $%s, Final: $%s.", heistName, formatMoneyWithCommas(price), depositTarget, formatMoneyWithCommas(initialMoney), formatMoneyWithCommas(finalMoney))
+            print(message)
+            GUI.AddToast("OPMONEY2", message, 5000, 0)
+        end
+    else
+        local message = string.format("Transaction initiation failed for $%s. 'GTA.BeginService' returned invalid.", formatMoneyWithCommas(price))
+        print(message)
+        GUI.AddToast("OPMONEY2", message, 5000, 0)
     end
 end
