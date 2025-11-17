@@ -2,7 +2,7 @@ GUI.AddToast("OPMONEY2.3", "Added Improved $ Earned\n Console now shows when tra
 GUI.AddToast("OPMONEY2.3", "Only first three Loops seem to be working rn looking into it" , 8000, 0)
 GUI.AddToast("OPMONEY2.3", "Warning Script still in Testing Safe Limits unknown" , 8000, 0)
 
-local transactionCountdownToggle = "TransactionCountdown"
+local transactionCountdownToggle = "Countdown"
 local transactionCountdown = 20
 local TRANSACTION_MINUTES = {20, 30, 40, 50, 60}
 
@@ -234,7 +234,7 @@ FeatureMgr.AddFeature(Utils.Joaat(depositLocationToggle), "Deposit in", eFeature
 end)
 
 -- New feature for transaction countdown
-FeatureMgr.AddFeature(Utils.Joaat(transactionCountdownToggle), "Transaction Countdown", eFeatureType.List, "Choose the time between transactions", function(f)
+FeatureMgr.AddFeature(Utils.Joaat(transactionCountdownToggle), "Countdown", eFeatureType.List, "Choose the time between transactions", function(f)
     local selectedIndex = f:GetListIndex()
     if selectedIndex >= 0 and selectedIndex < #TRANSACTION_MINUTES then
         transactionCountdown = TRANSACTION_MINUTES[selectedIndex + 1] -- +1 because Lua arrays are 1-indexed
@@ -364,7 +364,7 @@ local function opmoneytab()
             end
             local countdownString = table.concat(countdownItems, "\0") .. "\0\0"
 
-            local newTransactionCountdownIndex = ImGui.Combo("Transaction Countdown", currentTransactionCountdownIndex, countdownString)
+            local newTransactionCountdownIndex = ImGui.Combo("Countdown", currentTransactionCountdownIndex, countdownString)
             if newTransactionCountdownIndex ~= currentTransactionCountdownIndex then
                 transactionCountdown = TRANSACTION_MINUTES[newTransactionCountdownIndex + 1]
                 updateHeistIntervals()
