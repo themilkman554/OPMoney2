@@ -3,7 +3,8 @@ GUI.AddToast("OPMONEY2.3", "Only first three Loops seem to be working rn looking
 GUI.AddToast("OPMONEY2.3", "Warning Script still in Testing Safe Limits unknown" , 8000, 0)
 
 local transactionCountdownToggle = "TransactionCountdown"
-local transactionCountdown = 20 
+local transactionCountdown = 20
+local TRANSACTION_MINUTES = {20, 30, 40, 50, 60}
 
 local function updateHeistIntervals()
 	CAYO_HEIST_INTERVAL_SECONDS = transactionCountdown * 60
@@ -235,9 +236,8 @@ end)
 -- New feature for transaction countdown
 FeatureMgr.AddFeature(Utils.Joaat(transactionCountdownToggle), "Transaction Countdown", eFeatureType.List, "Choose the time between transactions", function(f)
     local selectedIndex = f:GetListIndex()
-    local minutes = {20, 30, 40, 50, 60} -- Corresponds to the combo box options
-    if selectedIndex >= 0 and selectedIndex < #minutes then
-        transactionCountdown = minutes[selectedIndex + 1] -- +1 because Lua arrays are 1-indexed
+    if selectedIndex >= 0 and selectedIndex < #TRANSACTION_MINUTES then
+        transactionCountdown = TRANSACTION_MINUTES[selectedIndex + 1] -- +1 because Lua arrays are 1-indexed
         updateHeistIntervals() -- Recalculate intervals
         GUI.AddToast("OPMONEY2", string.format("Transaction countdown set to %d minutes.", transactionCountdown), 3000, 0)
     end
@@ -351,15 +351,24 @@ local function opmoneytab()
             end
 
             local currentTransactionCountdownIndex = 0
-            local options = {20, 30, 40, 50, 60}
-            for i, v in ipairs(options) do
+            for i, v in ipairs(TRANSACTION_MINUTES) do
                 if v == transactionCountdown then
                     currentTransactionCountdownIndex = i - 1
                     break
                 end
             end
-            local newTransactionCountdownIndex = ImGui.Combo("Transaction Countdown", currentTransactionCountdownIndex, "20 Minutes\0 30 Minutes\0 40 Minutes\0 50 Minutes\0 60 Minutes\0\0")
+
+            local countdownItems = {}
+            for _, v in ipairs(TRANSACTION_MINUTES) do
+                table.insert(countdownItems, string.format("%d Minutes", v))
+            end
+            local countdownString = table.concat(countdownItems, "\0") .. "\0\0"
+
+            local newTransactionCountdownIndex = ImGui.Combo("Transaction Countdown", currentTransactionCountdownIndex, countdownString)
             if newTransactionCountdownIndex ~= currentTransactionCountdownIndex then
+                transactionCountdown = TRANSACTION_MINUTES[newTransactionCountdownIndex + 1]
+                updateHeistIntervals()
+                GUI.AddToast("OPMONEY2", string.format("Transaction countdown set to %d minutes.", transactionCountdown), 3000, 0)
                 FeatureMgr.SetFeatureListIndex(Utils.Joaat(transactionCountdownToggle), newTransactionCountdownIndex)
             end
             ClickGUI.EndCustomChildWindow()
