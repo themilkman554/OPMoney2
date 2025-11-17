@@ -1,4 +1,4 @@
-
+GUI.AddToast("OPMONEY2.2", Added Improved $ Earned\n Console now shows when failed\n Some heists still only work once looking into it. , 5000, 0)
 
 local CAYO_HEIST_INTERVAL_SECONDS = 31 * 60 
 
