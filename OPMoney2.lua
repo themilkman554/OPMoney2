@@ -1,5 +1,5 @@
-GUI.AddToast("OPMONEY2.4", "Fixed Aparment and Agency, Clucking still broken" , 8000, 0)
-GUI.AddToast("OPMONEY2.4", "Warning Script still in Testing Safe Limits unknown" , 8000, 0)
+GUI.AddToast("OPMONEY2.5", "Everything Works now Crazy I know" , 8000, 0)
+GUI.AddToast("OPMONEY2.5", "Warning Script still in Testing Safe Limits unknown" , 8000, 0)
 
 local transactionCountdownToggle = "Countdown"
 local transactionCountdown = 20
@@ -65,7 +65,7 @@ local heistNames = {
     [Utils.Joaat("SERVICE_EARN_GANGOPS_FINALE")] = "Doomsday Heist Finale",
     [-4234381672402021149] = "Agency Heist Finale",
     [393059668] = "Apartment Heist Finale",
-    [Utils.Joaat("SERVICE_EARN_CLUCKING_BELL_FINALE")] = "Clucking Bell Heist Finale"
+    [4872550094085080705] = "Clucking Bell Heist Finale"
 }
 
 local addFiveMinutesToggle = "AddFiveMinutesBetweenTimers"
@@ -210,7 +210,7 @@ FeatureMgr.AddFeature(Utils.Joaat(cluckingBellHeistToggle), "Enable Clucking Bel
             cluckingBellHeistInitialDelaySet = false
             cluckingBellHeistInitialDelay = otherActiveHeistCount * 300
         else
-            TriggerTransaction(Utils.Joaat("SERVICE_EARN_CLUCKING_BELL_FINALE"), CLUCKING_BELL_HEIST_PAYOUT)
+            TriggerTransaction(4872550094085080705, CLUCKING_BELL_HEIST_PAYOUT)
             cluckingBellHeistInitialDelaySet = true
             cluckingBellHeistInitialDelay = 0
         end
@@ -587,7 +587,7 @@ local function heistLoop()
         if cluckingBellHeistTimerActive then
             local interval = cluckingBellHeistInitialDelaySet and CLUCKING_BELL_HEIST_INTERVAL_SECONDS or cluckingBellHeistInitialDelay
             if currentTime - cluckingBellHeistLastTransactionTime >= interval then
-                TriggerTransaction(Utils.Joaat("SERVICE_EARN_CLUCKING_BELL_FINALE"), CLUCKING_BELL_HEIST_PAYOUT)
+                TriggerTransaction(4872550094085080705, CLUCKING_BELL_HEIST_PAYOUT)
                 cluckingBellHeistLastTransactionTime = currentTime
                 if not cluckingBellHeistInitialDelaySet then
                     cluckingBellHeistInitialDelaySet = true
