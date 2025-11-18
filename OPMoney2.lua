@@ -1,8 +1,8 @@
 GUI.AddToast("OPMONEY2.5", "Everything Works now Crazy I know" , 8000, 0)
-GUI.AddToast("OPMONEY2.5", "Warning Script still in Testing Safe Limits unknown" , 8000, 0)
+GUI.AddToast("OPMONEY2.5", "Warning BANS have been reported still may be safe at lower limits\n Should prob not turn everything on and leave it running" , 12000, 0)
 
 local transactionCountdownToggle = "Countdown"
-local transactionCountdown = 20
+local transactionCountdown = 60
 local TRANSACTION_MINUTES = {20, 30, 40, 50, 60}
 
 local function updateHeistIntervals()
@@ -70,7 +70,7 @@ local heistNames = {
 
 local addFiveMinutesToggle = "AddFiveMinutesBetweenTimers"
 
-local addFiveMinutesActive = false
+local addFiveMinutesActive = true
 
 local depositLocationToggle = "DepositLocation"
 local depositLocation = 1 -- Default to Wallet (1), Bank is 2
