@@ -64,7 +64,7 @@ local heistNames = {
     [0xB703ED29] = "Diamond Casino Heist",
     [Utils.Joaat("SERVICE_EARN_GANGOPS_FINALE")] = "Doomsday Heist Finale",
     [Utils.Joaat("SERVICE_EARN_AGENCY_FINALE")] = "Agency Heist Finale",
-    [Utils.Joaat("SERVICE_EARN_HEIST_FINALE")] = "Apartment Heist Finale",
+    [393059668] = "Apartment Heist Finale",
     [Utils.Joaat("SERVICE_EARN_CLUCKING_BELL_FINALE")] = "Clucking Bell Heist Finale"
 }
 
@@ -190,7 +190,7 @@ FeatureMgr.AddFeature(Utils.Joaat(apartmentHeistToggle), "Enable Apartment Heist
             apartmentHeistInitialDelaySet = false
             apartmentHeistInitialDelay = otherActiveHeistCount * 300
         else
-            TriggerTransaction(Utils.Joaat("SERVICE_EARN_HEIST_FINALE"), APARTMENT_HEIST_PAYOUT)
+            TriggerTransaction(393059668, APARTMENT_HEIST_PAYOUT)
             apartmentHeistInitialDelaySet = true
             apartmentHeistInitialDelay = 0
         end
@@ -575,7 +575,7 @@ local function heistLoop()
         if apartmentHeistTimerActive then
             local interval = apartmentHeistInitialDelaySet and APARTMENT_HEIST_INTERVAL_SECONDS or apartmentHeistInitialDelay
             if currentTime - apartmentHeistLastTransactionTime >= interval then
-                TriggerTransaction(Utils.Joaat("SERVICE_EARN_HEIST_FINALE"), APARTMENT_HEIST_PAYOUT)
+                TriggerTransaction(393059668, APARTMENT_HEIST_PAYOUT)
                 apartmentHeistLastTransactionTime = currentTime
                 if not apartmentHeistInitialDelaySet then
                     apartmentHeistInitialDelaySet = true
