@@ -1,6 +1,5 @@
-GUI.AddToast("OPMONEY2.3", "Added Improved $ Earned\n Console now shows when transaction failed \n Added Countdown Changer" , 8000, 0)
-GUI.AddToast("OPMONEY2.3", "Only first three Loops seem to be working rn looking into it" , 8000, 0)
-GUI.AddToast("OPMONEY2.3", "Warning Script still in Testing Safe Limits unknown" , 8000, 0)
+GUI.AddToast("OPMONEY2.4", "Fixed Aparment and Agency, Clucking still broken" , 8000, 0)
+GUI.AddToast("OPMONEY2.4", "Warning Script still in Testing Safe Limits unknown" , 8000, 0)
 
 local transactionCountdownToggle = "Countdown"
 local transactionCountdown = 20
@@ -28,7 +27,8 @@ local CAYO_HEIST_PAYOUT = 2050000
 
 local DOOMSDAY_HEIST_PAYOUT = 2550000
 
-local AGENCY_HEIST_PAYOUT = 3000000
+--first time might be 3m
+local AGENCY_HEIST_PAYOUT = 2000000
 
 local APARTMENT_HEIST_PAYOUT = 3000000
 
@@ -63,7 +63,7 @@ local heistNames = {
     [0xDBF39508] = "Cayo Perico Heist",
     [0xB703ED29] = "Diamond Casino Heist",
     [Utils.Joaat("SERVICE_EARN_GANGOPS_FINALE")] = "Doomsday Heist Finale",
-    [Utils.Joaat("SERVICE_EARN_AGENCY_FINALE")] = "Agency Heist Finale",
+    [-4234381672402021149] = "Agency Heist Finale",
     [393059668] = "Apartment Heist Finale",
     [Utils.Joaat("SERVICE_EARN_CLUCKING_BELL_FINALE")] = "Clucking Bell Heist Finale"
 }
@@ -160,7 +160,7 @@ FeatureMgr.AddFeature(Utils.Joaat(doomsdayHeistToggle), "Enable DoomsDay Heist F
     end
 end)
 
-FeatureMgr.AddFeature(Utils.Joaat(agencyHeistToggle), "Enable Agency Heist (3m payout)", eFeatureType.Toggle, "", function(f)
+FeatureMgr.AddFeature(Utils.Joaat(agencyHeistToggle), "Enable Agency Heist (2m payout)", eFeatureType.Toggle, "", function(f)
     local wasActive = agencyHeistTimerActive
     agencyHeistTimerActive = f:IsToggled()
     if agencyHeistTimerActive and not wasActive then
@@ -170,7 +170,7 @@ FeatureMgr.AddFeature(Utils.Joaat(agencyHeistToggle), "Enable Agency Heist (3m p
             agencyHeistInitialDelaySet = false
             agencyHeistInitialDelay = otherActiveHeistCount * 300
         else
-            TriggerTransaction(Utils.Joaat("SERVICE_EARN_AGENCY_FINALE"), AGENCY_HEIST_PAYOUT)
+            TriggerTransaction(-4234381672402021149, AGENCY_HEIST_PAYOUT)
             agencyHeistInitialDelaySet = true
             agencyHeistInitialDelay = 0
         end
@@ -300,7 +300,7 @@ local function opmoneytab()
             if doomsdayHeistTimerActive then
             end
 
-            local newAgencyHeistState = ImGui.Checkbox("Enable Agency Heist (3m payout)", agencyHeistTimerActive)
+            local newAgencyHeistState = ImGui.Checkbox("Enable Agency Heist (2m payout)", agencyHeistTimerActive)
             if newAgencyHeistState ~= agencyHeistTimerActive then
                 FeatureMgr.ToggleFeature(Utils.Joaat(agencyHeistToggle))
             end
@@ -563,7 +563,7 @@ local function heistLoop()
         if agencyHeistTimerActive then
             local interval = agencyHeistInitialDelaySet and AGENCY_HEIST_INTERVAL_SECONDS or agencyHeistInitialDelay
             if currentTime - agencyHeistLastTransactionTime >= interval then
-                TriggerTransaction(Utils.Joaat("SERVICE_EARN_AGENCY_FINALE"), AGENCY_HEIST_PAYOUT)
+                TriggerTransaction(-4234381672402021149, AGENCY_HEIST_PAYOUT)
                 agencyHeistLastTransactionTime = currentTime
                 if not agencyHeistInitialDelaySet then
                     agencyHeistInitialDelaySet = true
