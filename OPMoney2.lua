@@ -1,5 +1,4 @@
-GUI.AddToast("OPMONEY2.5", "Everything Works now Crazy I know" , 8000, 0)
-GUI.AddToast("OPMONEY2.5", "Warning BANS have been reported still may be safe at lower limits\n Should prob not turn everything on and leave it running" , 12000, 0)
+GUI.AddToast("OPMONEY2.5", "Warning BANS have been reported even when doing as little as 50m per day.  Would not recommend using this as of now.  Might be safe under certain conditions, but not recommended to use" , 30000, 0)
 
 local transactionCountdownToggle = "Countdown"
 local transactionCountdown = 60
